@@ -189,9 +189,10 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
 }
-.scroll-content::-webkit-scrollbar { display: none; }
+.scroll-content::-webkit-scrollbar { width: 4px; }
+.scroll-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+.scroll-content::-webkit-scrollbar-track { background: transparent; }
 
 /* Gradient header behind hero */
 .scroll-content::before {
@@ -309,6 +310,51 @@ body {
   flex-shrink: 0;
 }
 .play-fab:active { transform: scale(0.94); background: var(--green-bright); }
+
+/* ── SEARCH & FILTER ──────────────────────────────────────────────── */
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 16px 16px;
+  position: relative;
+  z-index: 1;
+}
+.search-box {
+  flex: 1;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 8px;
+}
+.search-box input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-family: var(--font);
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+}
+.search-box input::placeholder {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.filter-btn {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  height: 36px;
+  padding: 0 14px;
+  cursor: pointer;
+  font-family: var(--font);
+}
 
 /* ══ SONG LIST ════════════════════════════════════════════════════════ */
 .song-list {
@@ -475,6 +521,34 @@ body {
   margin-right: -8px;
 }
 .song-dots-btn:active { color: #fff; background: rgba(255,255,255,0.1); }
+
+/* ── ADD MORE SECTION ─────────────────────────────────────────────── */
+.add-more-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 16px 40px;
+  cursor: pointer;
+}
+.add-icon-box {
+  width: 48px; height: 48px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.add-more-row:active .add-icon-box, .add-more-row:hover .add-icon-box { background: rgba(255,255,255,0.2); }
+.add-more-text {
+  display: flex; flex-direction: column;
+}
+.add-main {
+  font-size: 15px; color: #fff; font-weight: 500;
+}
+.add-sub {
+  font-size: 13px; color: var(--text-secondary); margin-top: 2px;
+}
 
 /* ══ BOTTOM ACTION BAR ════════════════════════════════════════════════ */
 .bottom-action-bar {

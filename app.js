@@ -40,6 +40,7 @@ let state = {
   isCleanupMode: false,
   isMultiSelect: false,
   isShuffled: false,
+  searchQuery: '',
   selectedSongs: new Set(),
   activeSheetSongId: null,
   playingSongId: 1
@@ -54,6 +55,7 @@ const ui = {
   shuffleBtn:  document.getElementById('shuffleBtn'),
   cleanupBtn:  document.getElementById('cleanupBtn'),
   cleanupDot:  document.getElementById('cleanupDot'),
+  searchInput: document.getElementById('playlistSearch'),
   multiTopbar: document.getElementById('multiselectTopbar'),
   multiCount:  document.getElementById('multiSelectCount'),
   bottomBar:   document.getElementById('bottomActionBar'),
@@ -68,6 +70,14 @@ function init() {
   ui.topTitle.textContent = ui.heroTitle.textContent;
   ui.scroll.addEventListener('scroll', onScroll);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') handleBack(); });
+  
+  if (ui.searchInput) {
+    ui.searchInput.addEventListener('input', (e) => {
+      state.searchQuery = e.target.value.toLowerCase();
+      renderSongs();
+    });
+  }
+  
   renderSongs();
 }
 
@@ -90,13 +100,24 @@ function onScroll() {
 function renderSongs() {
   ui.songList.innerHTML = '';
   
+  // Apply Search Filter
+  let displaySongs = SONGS.filter(s => 
+    s.title.toLowerCase().includes(state.searchQuery) ||
+    s.artist.toLowerCase().includes(state.searchQuery)
+  );
+  
   if (state.isCleanupMode) {
     // Sort entire list by play count descending
-    const sortedSongs = [...SONGS].sort((a, b) => b.playCount - a.playCount);
+    const sortedSongs = [...displaySongs].sort((a, b) => b.playCount - a.playCount);
     sortedSongs.forEach(s => ui.songList.appendChild(buildRow(s, true)));
   } else {
     // DEFAULT FLAT LIST (or Shuffled)
-    SONGS.forEach(s => ui.songList.appendChild(buildRow(s, false)));
+    displaySongs.forEach(s => ui.songList.appendChild(buildRow(s, false)));
+  }
+
+  // Inject "Add Songs" button if search is empty
+  if (state.searchQuery === '' && !state.isCleanupMode) {
+    ui.songList.appendChild(buildAddMoreBtn());
   }
 
   updateMultiSelectUI();
@@ -115,6 +136,25 @@ function buildHeader(title, count) {
 function buildDivider() {
   const d = document.createElement('div');
   d.className = 'section-sep';
+  return d;
+}
+
+function buildAddMoreBtn() {
+  const d = document.createElement('div');
+  d.className = 'add-more-row';
+  d.innerHTML = `
+    <div class="add-icon-box">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M11 11V4h2v7h7v2h-7v7h-2v-7H4v-2h7z"/></svg>
+    </div>
+    <div class="add-more-text">
+      <span class="add-main">Add to this playlist</span>
+      <span class="add-sub">Find more songs</span>
+    </div>
+  `;
+  d.addEventListener('click', () => {
+    showToast('🔍 Opening search...');
+    if(ui.searchInput) ui.searchInput.focus();
+  });
   return d;
 }
 
@@ -197,12 +237,20 @@ function buildRow(song, isSortedView) {
 // ── FEATURE A: CLEANUP TOGGLE ────────────────────────────────────
 function toggleCleanupMode() {
   state.isCleanupMode = !state.isCleanupMode;
+  
+  if (state.isCleanupMode) {
+    // RANDOMIZE play counts for demonstration purposes
+    SONGS.forEach(song => {
+      song.playCount = Math.floor(Math.random() * 200); // 0 to 199 plays
+    });
+    showToast('🔢 Randomized & sorted by play count');
+  } else {
+    showToast('Restored default order');
+  }
+
   ui.cleanupBtn.classList.toggle('active', state.isCleanupMode);
   ui.cleanupDot.classList.toggle('hidden', !state.isCleanupMode);
   
-  if (state.isCleanupMode) showToast('🔢 Sorted by play count');
-  else showToast('Restored default order');
-
   renderSongs();
 }
 
