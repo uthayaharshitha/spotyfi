@@ -226,9 +226,13 @@ body {
 .play-fab:hover { transform: scale(1.04); background: var(--green-bright); }
 .play-fab:active { transform: scale(0.96); }
 
-.shuffle-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; transition: color 0.1s; }
-.shuffle-btn:hover { color: #fff; }
-.shuffle-btn.active { color: var(--green); }
+.shuffle-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; transition: color 0.2s, transform 0.1s; }
+.shuffle-btn:hover { color: #fff; transform: scale(1.05); }
+.shuffle-btn:active { transform: scale(0.95); }
+.shuffle-btn.active { color: var(--green); position: relative; }
+.shuffle-btn.active::after {
+  content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--green); border-radius: 50%;
+}
 
 .sub-controls-right { display: flex; align-items: center; gap: 16px; }
 
@@ -449,10 +453,16 @@ body {
 
 .playbar-center { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .playbar-controls { display: flex; align-items: center; gap: 24px; }
-.playbar-controls button { background: none; border: none; color: var(--text-secondary); cursor: pointer; }
-.playbar-controls button:hover { color: #fff; }
-.playbar-controls .pb-play { width: 32px; height: 32px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-.playbar-controls .pb-play:hover { transform: scale(1.04); }
+.playbar-controls button { background: none; border: none; color: var(--text-secondary); cursor: pointer; transition: color 0.2s, transform 0.1s; }
+.playbar-controls button:hover { color: #fff; transform: scale(1.05); }
+.playbar-controls button:active { transform: scale(0.95); }
+.playbar-controls .pb-play { 
+  width: 36px; height: 36px; background: #fff; border-radius: 50%; 
+  display: flex; align-items: center; justify-content: center; color: #000;
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+.playbar-controls .pb-play:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(255,255,255,0.2); }
+.playbar-controls .pb-play:active { transform: scale(0.95); }
 
 .playbar-progress { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 600px; }
 .playbar-progress .time { font-size: 11px; color: var(--text-secondary); }

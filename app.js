@@ -66,9 +66,11 @@ const ui = {
 };
 
 // ── INIT ─────────────────────────────────────────────────────────
-function init() {
-  ui.topTitle.textContent = ui.heroTitle.textContent;
-  ui.scroll.addEventListener('scroll', onScroll);
+window.onload = () => {
+  if (ui.topTitle && ui.heroTitle) {
+    ui.topTitle.textContent = ui.heroTitle.textContent;
+  }
+  if (ui.scroll) ui.scroll.addEventListener('scroll', onScroll);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') handleBack(); });
   
   if (ui.searchInput) {
@@ -432,6 +434,3 @@ function showToast(msg) {
     ui.toast.classList.remove('show');
   }, 2500);
 }
-
-// Kickoff
-init();
