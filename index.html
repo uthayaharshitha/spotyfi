@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spotify – Playlist Cleanup & Multi-Select</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ── PAGE WRAPPER (centers phone on desktop) ─────────────────────── -->
+<div class="page-wrapper">
+
+  <!-- ── PHONE FRAME ──────────────────────────────────────────────── -->
+  <div class="phone-frame">
+    <div class="phone-screen">
+
+      <!-- STATUS BAR -->
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+        </div>
+      </div>
+
+      <!-- ══ SCREEN CONTENT ══ -->
+      <div class="screen" id="screen">
+
+        <!-- ① DEFAULT / CLEANUP topbar (visible normally) -->
+        <div class="mobile-topbar" id="mobileTopbar">
+          <button class="topbar-icon-btn" id="backBtn" onclick="handleBack()">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M15.315 2.226a1 1 0 0 1 0 1.414L8.98 10l6.335 6.36a1 1 0 1 1-1.419 1.409L6.627 10.7a1 1 0 0 1 0-1.408l7.27-7.066a1 1 0 0 1 1.418 0z"/></svg>
+          </button>
+          <span class="topbar-title" id="topbarTitle"></span>
+          <div class="topbar-right-actions">
+            <button class="topbar-icon-btn">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+            </button>
+            <button class="topbar-icon-btn" id="topbarMoreBtn" onclick="openPlaylistMenu()">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M4.5 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm15 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-7.5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- ② MULTI-SELECT topbar (hidden by default) -->
+        <div class="multiselect-topbar hidden" id="multiselectTopbar">
+          <button class="cancel-multiselect" id="cancelBtn" onclick="exitMultiSelect()">Cancel</button>
+          <div class="multiselect-center">
+            <span class="multiselect-title">Select Songs</span>
+            <span class="multiselect-count" id="multiSelectCount">0 selected</span>
+          </div>
+          <button class="select-all-btn" id="selectAllBtn" onclick="toggleSelectAll()">All</button>
+        </div>
+
+        <!-- ── SCROLLABLE CONTENT ──────────────────────────────────── -->
+        <div class="scroll-content" id="scrollContent">
+
+          <!-- PLAYLIST HERO -->
+          <div class="playlist-hero" id="playlistHero">
+            <div class="hero-cover" id="heroCover">
+              <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#4527a0;stop-opacity:1"/>
+                    <stop offset="100%" style="stop-color:#1a237e;stop-opacity:1"/>
+                  </linearGradient>
+                </defs>
+                <rect width="220" height="220" fill="url(#heroGrad)"/>
+                <text x="110" y="140" text-anchor="middle" font-size="80" fill="rgba(255,255,255,0.25)">♪</text>
+              </svg>
+            </div>
+            <h1 class="playlist-title">My Playlist #1</h1>
+            <p class="playlist-meta">
+              <span class="playlist-owner">uthaya harshitha</span>
+              <span class="meta-dot">·</span>
+              <span class="playlist-count" id="playlistCount">15 songs</span>
+            </p>
+          </div>
+
+          <!-- PLAYLIST SUB-CONTROLS -->
+          <div class="sub-controls" id="subControls">
+            <div class="sub-controls-left">
+              <!-- Shuffle -->
+              <button class="shuffle-btn" id="shuffleBtn" onclick="toggleShuffle()" title="Shuffle">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="#1DB954"><path d="M17.676 3.11L22 7.5l-4.324 4.39-.706-.707L19.866 8.5H17.5c-1.604 0-3.058.8-4.302 2.113l-.942-.96C13.698 8.26 15.477 7.5 17.5 7.5l.004-.001 2.36-.007-2.894-2.892.706-.49zM7.5 8.5C5.896 8.5 4.442 9.3 3.198 10.613l-.942-.96C3.698 8.26 5.477 7.5 7.5 7.5H10v1H7.5zm9 7c1.604 0 3.058-.8 4.302-2.113l.942.96C20.302 15.74 18.523 16.5 16.5 16.5H14v-1h2.5zm-9 0C5.896 15.5 4.442 14.7 3.198 13.387l.942-.96C5.386 13.7 6.84 14.5 8.44 14.5H10v1H7.5zM22 16.5l-4.324 4.39-.706-.49 2.894-2.892.706.707L22 16.5z"/></svg>
+              </button>
+            </div>
+            <div class="sub-controls-right">
+              <!-- FEATURE A: Cleanup Mode Toggle -->
+              <button class="cleanup-btn" id="cleanupBtn" onclick="toggleCleanupMode()" title="Sort by Inactivity">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M11 9h10v2H11V9zm-2-4h12v2H9V5zm4 8h8v2h-8v-2zm-8.5-.5 4.5 4.5-4.5 4.5-1.41-1.41L10.17 18l-3.58-3.59L5 13l1.5-1.5zM4 20h12v2H4v-2z"/></svg>
+                Sort by Inactivity
+                <span class="cleanup-dot hidden" id="cleanupDot"></span>
+              </button>
+              <!-- Play button -->
+              <button class="play-fab" title="Play">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="#000"><path d="M7.05 3.606l13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- SONG LIST -->
+          <div class="song-list" id="songList">
+            <!-- Rendered by JS -->
+          </div>
+
+        </div>
+        <!-- /scroll-content -->
+
+      </div>
+      <!-- /screen -->
+
+      <!-- ── HOME INDICATOR ──────────────────────────────────────── -->
+      <div class="home-indicator"></div>
+
+    </div>
+    <!-- /phone-screen -->
+  </div>
+  <!-- /phone-frame -->
+
+</div>
+<!-- /page-wrapper -->
+
+<!-- ══ BOTTOM ACTION BAR (fixed inside phone) ══════════════════════ -->
+<div class="bottom-action-bar hidden" id="bottomActionBar">
+  <button class="action-btn" onclick="bulkAction('remove')">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 6h18v2H3V6zm2 3h14l-1.5 12h-11L5 9zm5 2v7h2v-7h-2zm4 0v7h2v-7h-2zm-7-8V1h8v2h5v2H2V3h5zm2 0h4V3H9v2z"/></svg>
+    <span>Remove</span>
+  </button>
+  <button class="action-btn" onclick="bulkAction('add')">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M14 10H3v2h11v-2zm0-4H3v2h11V6zm4 8v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM3 16h7v-2H3v2z"/></svg>
+    <span>Add to</span>
+  </button>
+  <button class="action-btn" onclick="bulkAction('move')">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"/></svg>
+    <span>Move</span>
+  </button>
+  <button class="action-btn" onclick="bulkAction('queue')">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h11v2H3v-2zm14 0h2v3h3v2h-3v3h-2v-3h-3v-2h3v-3z"/></svg>
+    <span>Queue</span>
+  </button>
+</div>
+
+<!-- ══ CONTEXT MENU BOTTOM SHEET ═══════════════════════════════════ -->
+<div class="sheet-overlay hidden" id="sheetOverlay" onclick="closeSheet()"></div>
+<div class="bottom-sheet hidden" id="bottomSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-song-header" id="sheetSongHeader">
+    <div class="sheet-song-thumb" id="sheetSongThumb"></div>
+    <div class="sheet-song-info">
+      <span class="sheet-song-title" id="sheetSongTitle">Song Title</span>
+      <span class="sheet-song-artist" id="sheetSongArtist">Artist</span>
+    </div>
+  </div>
+  <div class="sheet-divider"></div>
+  <div class="sheet-item" onclick="sheetAction('queue')">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h11v2H3v-2zm14 0h2v3h3v2h-3v3h-2v-3h-3v-2h3v-3z"/></svg>
+    Add to queue
+  </div>
+  <div class="sheet-item" onclick="sheetAction('artist')">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5zm0 1.5a3.75 3.75 0 1 1 0-7.5 3.75 3.75 0 0 1 0 7.5zM5.25 18.75c0-3.728 2.985-6.75 6.75-6.75s6.75 3.022 6.75 6.75H5.25z"/></svg>
+    Go to artist
+  </div>
+  <div class="sheet-item" onclick="sheetAction('album')">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zM1.5 12A10.5 10.5 0 1 1 12 22.5 10.5 10.5 0 0 1 1.5 12zm10.5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg>
+    Go to album
+  </div>
+  <div class="sheet-item" onclick="sheetAction('like')">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+    Save to Liked Songs
+  </div>
+  <div class="sheet-item sheet-item--select" id="selectSongItem" onclick="enterMultiSelectFromSheet()">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M21 6.5l-1.41-1.41-11.09 11.09-4.59-4.58L2.5 13l5.5 5.5z"/></svg>
+    Select Song
+  </div>
+  <div class="sheet-divider"></div>
+  <div class="sheet-item sheet-item--danger" onclick="sheetAction('remove')">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 6h18v2H3V6zm2 3h14l-1.5 12h-11L5 9zm5 2v7h2v-7h-2zm4 0v7h2v-7h-2zm-7-8V1h8v2h5v2H2V3h5zm2 0h4V3H9v2z"/></svg>
+    Remove from this playlist
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast hidden" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
