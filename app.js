@@ -62,7 +62,10 @@ const ui = {
   songList:    document.getElementById('songList'),
   sheet:       document.getElementById('bottomSheet'),
   overlay:     document.getElementById('sheetOverlay'),
-  toast:       document.getElementById('toast')
+  toast:       document.getElementById('toast'),
+  hamburgerBtn:document.getElementById('hamburgerBtn'),
+  sidebar:     document.querySelector('.sidebar'),
+  sidebarOverlay:document.getElementById('sidebarOverlay')
 };
 
 // ── INIT ─────────────────────────────────────────────────────────
@@ -80,7 +83,38 @@ window.onload = () => {
     });
   }
   
+  if (ui.hamburgerBtn) {
+    ui.hamburgerBtn.addEventListener('click', toggleSidebar);
+  }
+  if (ui.sidebarOverlay) {
+    ui.sidebarOverlay.addEventListener('click', closeSidebar);
+  }
+
   renderSongs();
+}
+
+// ── SIDEBAR TOGGLE ───────────────────────────────────────────────
+function toggleSidebar() {
+  if (ui.sidebar && ui.sidebarOverlay) {
+    const isOpen = ui.sidebar.classList.contains('open');
+    if (isOpen) {
+      closeSidebar();
+    } else {
+      ui.sidebar.classList.add('open');
+      ui.sidebarOverlay.classList.remove('hidden');
+      ui.sidebarOverlay.classList.add('visible');
+    }
+  }
+}
+
+function closeSidebar() {
+  if (ui.sidebar && ui.sidebarOverlay) {
+    ui.sidebar.classList.remove('open');
+    ui.sidebarOverlay.classList.remove('visible');
+    setTimeout(() => {
+      ui.sidebarOverlay.classList.add('hidden');
+    }, 300); // transition duration
+  }
 }
 
 // ── SCROLL DETECT ────────────────────────────────────────────────

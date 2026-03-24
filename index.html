@@ -36,8 +36,11 @@
     <!-- TOPBAR -->
     <header class="topbar" id="mobileTopbar">
       <div class="topbar-left">
-        <button class="nav-btn"><svg viewBox="0 0 24 24" width="24" height="24" fill="#fff"><path d="M15.957 2.793a1 1 0 0 1 0 1.414L8.164 12l7.793 7.793a1 1 0 1 1-1.414 1.414L5.336 12l9.207-9.207a1 1 0 0 1 1.414 0z"/></svg></button>
-        <button class="nav-btn"><svg viewBox="0 0 24 24" width="24" height="24" fill="#fff"><path d="M8.043 2.793a1 1 0 0 0 0 1.414L15.836 12l-7.793 7.793a1 1 0 1 0 1.414 1.414L18.664 12 9.457 2.793a1 1 0 0 0-1.414 0z"/></svg></button>
+        <button class="nav-btn hamburger-btn mobile-only" id="hamburgerBtn" aria-label="Open Menu">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="#fff"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </button>
+        <button class="nav-btn desktop-only"><svg viewBox="0 0 24 24" width="24" height="24" fill="#fff"><path d="M15.957 2.793a1 1 0 0 1 0 1.414L8.164 12l7.793 7.793a1 1 0 1 1-1.414 1.414L5.336 12l9.207-9.207a1 1 0 0 1 1.414 0z"/></svg></button>
+        <button class="nav-btn desktop-only"><svg viewBox="0 0 24 24" width="24" height="24" fill="#fff"><path d="M8.043 2.793a1 1 0 0 0 0 1.414L15.836 12l-7.793 7.793a1 1 0 1 0 1.414 1.414L18.664 12 9.457 2.793a1 1 0 0 0-1.414 0z"/></svg></button>
       </div>
       <!-- Multi-select Topbar (hidden by default) inside main topbar space -->
       <div class="multiselect-topbar hidden" id="multiselectTopbar">
@@ -195,6 +198,9 @@
 </div>
 <!-- Invisible overlay to close desktop menu when clicking outside -->
 <div class="menu-overlay hidden" id="sheetOverlay" onclick="closeSheet()"></div>
+
+<!-- Sidebar Mobile Overlay -->
+<div class="sidebar-overlay hidden" id="sidebarOverlay"></div>
 
 <!-- TOAST -->
 <div class="toast hidden" id="toast"></div>
