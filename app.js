@@ -124,19 +124,13 @@ function renderSongs() {
 }
 
 function buildHeader(title, count) {
-  const div = document.createElement('div');
-  div.className = 'section-header';
-  div.innerHTML = `
-    <div class="section-header-title">${title}</div>
-    <div class="section-header-sub">${count} song${count !== 1 ? 's' : ''}</div>
-  `;
-  return div;
+  // Desktop doesn't use section headers in the same way, but if needed,
+  // we can just return an empty doc fragment since we sort the whole list.
+  return document.createDocumentFragment();
 }
 
 function buildDivider() {
-  const d = document.createElement('div');
-  d.className = 'section-sep';
-  return d;
+  return document.createDocumentFragment();
 }
 
 function buildAddMoreBtn() {
@@ -168,57 +162,64 @@ function buildRow(song, isSortedView) {
     (isPlaying  ? ' playing' : '');
   row.dataset.id = song.id;
 
-  const checkboxHTML = `
-    <div class="checkbox-cell ${state.isMultiSelect ? 'visible' : ''}">
-      <div class="song-checkbox ${isSelected ? 'checked' : ''}"></div>
+  // Render the index number OR a play icon if hovered/playing
+  const numColHTML = `
+    <div class="row-num-col">
+      <span class="row-num">${isPlaying ? '<svg width="14" height="14" fill="var(--green)" viewBox="0 0 24 24"><path d="M6 3v18l15-9L6 3z"/></svg>' : song.id}</span>
+      <span class="play-icon-hover"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M6 3v18l15-9L6 3z"/></svg></span>
+      ${state.isMultiSelect ? `<div class="song-checkbox ${isSelected ? 'checked' : ''}"></div>` : ''}
     </div>
   `;
 
   const [c1, c2] = song.grad;
-  const thumbHTML = `
-    <div class="song-thumb">
-      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="g${song.id}" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
-          </linearGradient>
-        </defs>
-        <rect width="40" height="40" fill="url(#g${song.id})"/>
-        <text x="20" y="26" text-anchor="middle" font-size="20" fill="rgba(255,255,255,0.4)">♪</text>
-      </svg>
-      <div class="now-playing-overlay">
-        <div class="bars"><span></span><span></span><span></span></div>
+  // Info Col (Thumb + Title + Artist)
+  const infoColHTML = `
+    <div class="row-info-col">
+      <div class="song-thumb">
+        <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g${song.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
+            </linearGradient>
+          </defs>
+          <rect width="40" height="40" fill="url(#g${song.id})"/>
+          <text x="20" y="26" text-anchor="middle" font-size="20" fill="rgba(255,255,255,0.4)">♪</text>
+        </svg>
+      </div>
+      <div class="song-text">
+        <span class="song-title">${song.title}</span>
+        <span class="song-artist">${song.artist}</span>
       </div>
     </div>
   `;
 
-  // Play Count Subtitle string (visible only in sorted mode)
-  let tag = '';
-  if (isSortedView) {
-    tag = `<span class="inactivity-tag">Played ${song.playCount} time${song.playCount !== 1 ? 's' : ''}</span>`;
-  }
+  // Album Col
+  const albumColHTML = `<div class="row-album-col">${song.title} (Single)</div>`;
+  
+  // Date added Col (becomes Play Count string if sorted)
+  let dateText = isSortedView 
+    ? `<span class="inactivity-tag">Played ${song.playCount} time${song.playCount !== 1 ? 's' : ''}</span>`
+    : `Oct 24, 2023`;
+  const dateColHTML = `<div class="row-date-col">${dateText}</div>`;
 
-  row.innerHTML = `
-    ${checkboxHTML}
-    ${thumbHTML}
-    <div class="song-info">
-      <span class="song-title">${song.title}</span>
-      <span class="song-artist">${song.artist}</span>
-      ${tag}
+  // Time Col
+  const timeColHTML = `<div class="row-time-col">3:20</div>`;
+
+  // Dots Col
+  const dotsColHTML = `
+    <div class="row-dots-col">
+      <button class="song-dots-btn" aria-label="More options">•••</button>
     </div>
-    <button class="song-dots-btn" aria-label="More options">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-        <path d="M4.5 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm15 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm-7.5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
-      </svg>
-    </button>
   `;
+
+  row.innerHTML = numColHTML + infoColHTML + albumColHTML + dateColHTML + timeColHTML + dotsColHTML;
 
   // ROW CLICK HANDLER
   row.addEventListener('click', (e) => {
-    // If clicking dots, open sheet
+    // If clicking dots, open context menu
     if (e.target.closest('.song-dots-btn')) {
       e.stopPropagation();
-      openSheet(song);
+      openSheet(song, e);
       return;
     }
     // If multiselect ON, toggle checkbox
@@ -228,6 +229,10 @@ function buildRow(song, isSortedView) {
     }
     // Otherwise play song
     state.playingSongId = song.id;
+    // Update global playbar UI
+    document.getElementById('playbarTitle').textContent = song.title;
+    document.getElementById('playbarArtist').textContent = song.artist;
+    
     renderSongs();
   });
 
@@ -281,24 +286,20 @@ function toggleShuffle() {
   renderSongs();
 }
 
-// ── BOTTOM SHEET (Context Menu) ──────────────────────────────────
-function openSheet(song) {
+// ── DESKTOP CONTEXT MENU ─────────────────────────────────────────
+function openSheet(song, e) {
   state.activeSheetSongId = song.id;
   
-  // Populate sheet header
-  const [c1, c2] = song.grad;
-  document.getElementById('sheetSongThumb').innerHTML = `
-    <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="sg${song.id}" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
-        </linearGradient>
-      </defs>
-      <rect width="44" height="44" fill="url(#sg${song.id})"/>
-      <text x="22" y="28" text-anchor="middle" font-size="20" fill="rgba(255,255,255,0.4)">♪</text>
-    </svg>`;
-  document.getElementById('sheetSongTitle').textContent = song.title;
-  document.getElementById('sheetSongArtist').textContent = song.artist;
+  // Position menu near the click
+  const rect = e.target.getBoundingClientRect();
+  ui.sheet.style.top = `${rect.bottom + window.scrollY}px`;
+  
+  // Keep menu inside window bounds
+  if (rect.left + 200 > window.innerWidth) {
+    ui.sheet.style.left = `${window.innerWidth - 220}px`;
+  } else {
+    ui.sheet.style.left = `${rect.left}px`;
+  }
 
   ui.overlay.classList.remove('hidden');
   ui.sheet.classList.remove('hidden');
