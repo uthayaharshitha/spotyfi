@@ -33,6 +33,13 @@ const SONGS = [
   { id: 23, title: "Kiss Me More", artist: "Doja Cat", playCount: 0, grad: ["#4a148c", "#e65100"] }
 ];
 
+// Randomize durations on load
+SONGS.forEach(s => {
+  const mins = Math.floor(Math.random() * 3) + 2; // 2 to 4 mins
+  const secs = Math.floor(Math.random() * 60);
+  s.duration = `${mins}:${secs.toString().padStart(2, '0')}`;
+});
+
 const THRESHOLD = 5; // minimum playCount to be considered "active"
 
 // ── STATE ────────────────────────────────────────────────────────
@@ -124,12 +131,12 @@ function onScroll() {
   const threshold = 80; // topbar height approx
   if (heroRect.bottom < threshold) {
     ui.topTitle.classList.add('visible');
-    ui.topbar.style.background = 'rgba(26,35,126,0.95)';
+    ui.topbar.style.background = '#121212'; // Keep following with solid bg
     ui.topbar.style.backdropFilter = 'blur(10px)';
   } else {
     ui.topTitle.classList.remove('visible');
-    ui.topbar.style.background = 'transparent';
-    ui.topbar.style.backdropFilter = 'none';
+    ui.topbar.style.background = 'rgba(18, 18, 18, 0.7)'; // Dim but visible
+    ui.topbar.style.backdropFilter = 'blur(10px)';
   }
 }
 
@@ -143,9 +150,19 @@ function renderSongs() {
   );
   
   if (state.isCleanupMode) {
-    // Sort entire list by play count descending
-    const sortedSongs = [...displaySongs].sort((a, b) => b.playCount - a.playCount);
-    sortedSongs.forEach(s => ui.songList.appendChild(buildRow(s, true)));
+    // Activity Assort Sort: Most played first, then inactive ones separately
+    const activeSongs = displaySongs.filter(s => s.playCount >= THRESHOLD).sort((a,b) => b.playCount - a.playCount);
+    const inactiveSongs = displaySongs.filter(s => s.playCount < THRESHOLD).sort((a,b) => b.playCount - a.playCount);
+    
+    activeSongs.forEach(s => ui.songList.appendChild(buildRow(s, true)));
+    
+    if (inactiveSongs.length > 0) {
+      const header = document.createElement('h3');
+      header.className = 'section-header';
+      header.textContent = 'Songs not played in 3 months';
+      ui.songList.appendChild(header);
+      inactiveSongs.forEach(s => ui.songList.appendChild(buildRow(s, true)));
+    }
   } else {
     // DEFAULT FLAT LIST (or Shuffled)
     displaySongs.forEach(s => ui.songList.appendChild(buildRow(s, false)));
@@ -239,7 +256,7 @@ function buildRow(song, isSortedView) {
   const dateColHTML = `<div class="row-date-col">${dateText}</div>`;
 
   // Time Col
-  const timeColHTML = `<div class="row-time-col">3:20</div>`;
+  const timeColHTML = `<div class="row-time-col">${song.duration}</div>`;
 
   // Dots Col
   const dotsColHTML = `
@@ -280,11 +297,7 @@ function toggleCleanupMode() {
   state.isCleanupMode = !state.isCleanupMode;
   
   if (state.isCleanupMode) {
-    // RANDOMIZE play counts for demonstration purposes
-    SONGS.forEach(song => {
-      song.playCount = Math.floor(Math.random() * 200); // 0 to 199 plays
-    });
-    showToast('🔢 Randomized & sorted by play count');
+    showToast('📊 Activity Assort: Splitting playlist...');
   } else {
     showToast('Restored default order');
   }

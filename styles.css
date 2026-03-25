@@ -213,7 +213,10 @@ body {
   justify-content: space-between;
   padding: 24px;
 }
-.sub-controls-left { display: flex; align-items: center; gap: 32px; }
+.sub-controls-left { display: flex; align-items: center; gap: 24px; }
+.queue-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; transition: color 0.2s; }
+.queue-btn:hover { color: #fff; }
+
 .play-fab {
   width: 56px; height: 56px;
   border-radius: 50%;
@@ -298,6 +301,14 @@ body {
 /* ── SONG LIST & ROWS ─────────────────────────────────────────────── */
 .song-list {
   padding: 16px 24px 40px;
+}
+.section-header {
+  margin: 32px 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 8px;
 }
 
 .song-row {

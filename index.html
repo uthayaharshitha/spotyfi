@@ -91,7 +91,10 @@
             <svg viewBox="0 0 24 24" width="28" height="28" fill="#000"><path d="M7.05 3.606l13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"/></svg>
           </button>
           <button class="shuffle-btn" id="shuffleBtn" onclick="toggleShuffle()" title="Shuffle">
-            <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M17.676 3.11L22 7.5l-4.324 4.39-.706-.707L19.866 8.5H17.5c-1.604 0-3.058.8-4.302 2.113l-.942-.96C13.698 8.26 15.477 7.5 17.5 7.5l.004-.001 2.36-.007-2.894-2.892.706-.49zM7.5 8.5C5.896 8.5 4.442 9.3 3.198 10.613l-.942-.96C3.698 8.26 5.477 7.5 7.5 7.5H10v1H7.5zm9 7c1.604 0 3.058-.8 4.302-2.113l.942.96C20.302 15.74 18.523 16.5 16.5 16.5H14v-1h2.5zm-9 0C5.896 15.5 4.442 14.7 3.198 13.387l.942-.96C5.386 13.7 6.84 14.5 8.44 14.5H10v1H7.5zM22 16.5l-4.324 4.39-.706-.49 2.894-2.892.706.707L22 16.5z"/></svg>
+            <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor"><path d="M13.151.922a.75.75 0 1 0-1.06 1.06L13.109 3H11.16a5.07 5.07 0 0 0-4.839 3.4L4.099 11.72a3.56 3.56 0 0 1-3.395 2.384H.75a.75.75 0 1 0 0 1.5h.054a5.06 5.06 0 0 0 4.839-3.4l2.222-5.32a3.57 3.57 0 0 1 3.395-2.384h1.85l-1.018 1.018a.75.75 0 0 0 1.06 1.06L15.98 5.75l-2.829-2.828zM12.019 11.082a.75.75 0 1 0 1.06-1.06l-2.829-2.828-2.828 2.828a.75.75 0 1 0 1.06 1.06l1.018-1.018h1.849a5.07 5.07 0 0 0 1.574-.25l-.837-2.007a3.57 3.57 0 0 1-.737.757h-1.85l1.02 1.018zM4.1 4.28a3.56 3.56 0 0 0-3.396-2.383H.75a.75.75 0 1 0 0 1.5h.054a2.06 2.06 0 0 1 1.966 1.38l.836 2.008c.22-.27.468-.521.737-.75l-1.144-2.755z"/></svg>
+          </button>
+          <button class="queue-btn" id="queueBtn" onclick="showToast('Queue opened')" title="Queue">
+            <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor"><path d="M15 15H1v-1.5h14V15zm0-4.5H1V9h14v1.5zm-14-7A1.5 1.5 0 0 1 2.5 2h11A1.5 1.5 0 0 1 15 3.5v1.5H1V3.5z"/></svg>
           </button>
         </div>
         <div class="sub-controls-right">
@@ -101,9 +104,9 @@
             <input type="text" id="playlistSearch" placeholder="Find in playlist" autocomplete="off" />
           </div>
           <!-- FEATURE A: Cleanup Mode Toggle -->
-          <button class="cleanup-btn" id="cleanupBtn" onclick="toggleCleanupMode()" title="Sort by Play Count">
+          <button class="cleanup-btn" id="cleanupBtn" onclick="toggleCleanupMode()" title="Activity Assort">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M11 9h10v2H11V9zm-2-4h12v2H9V5zm4 8h8v2h-8v-2zm-8.5-.5 4.5 4.5-4.5 4.5-1.41-1.41L10.17 18l-3.58-3.59L5 13l1.5-1.5zM4 20h12v2H4v-2z"/></svg>
-            Sort by Play Count
+            Activity Assort
             <span class="cleanup-dot hidden" id="cleanupDot"></span>
           </button>
         </div>
