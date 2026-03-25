@@ -316,7 +316,7 @@ body {
   padding: 8px 0;
   border-radius: 4px;
   cursor: pointer;
-  transition: background 0.1s;
+  transition: background 0.1s, transform 0.3s ease-out, opacity 0.3s ease-out;
   margin-bottom: 2px;
 }
 .song-row:hover { background: rgba(255,255,255,0.1); }
@@ -326,6 +326,7 @@ body {
 .row-num-col {
   display: flex; align-items: center; justify-content: center;
   color: var(--text-secondary); font-size: 14px;
+  gap: 12px; /* Increased gap from number to checkbox */
 }
 .song-row:hover .row-num { display: none; }
 .song-row:hover .play-icon-hover { display: block; color: #fff; }

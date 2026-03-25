@@ -50,8 +50,12 @@ let state = {
   searchQuery: '',
   selectedSongs: new Set(),
   activeSheetSongId: null,
-  playingSongId: 1
+  playingSongId: 1,
+  isLiveShuffle: false
 };
+
+// Interval for live shuffle
+let liveShuffleInterval = null;
 
 // ── DOM REFS ─────────────────────────────────────────────────────
 const ui = {
@@ -98,6 +102,19 @@ window.onload = () => {
   }
 
   renderSongs();
+
+  // Start live play count randomization (subtle background change)
+  setInterval(() => {
+    SONGS.forEach(s => {
+      if (Math.random() > 0.8) {
+        s.playCount += Math.floor(Math.random() * 2);
+      }
+    });
+    if (!state.isLiveShuffle) {
+       // Just update the numbers if not in live shuffle mode but visible
+       // though usually we only want to re-render if it's "live"
+    }
+  }, 3000);
 }
 
 // ── SIDEBAR TOGGLE ───────────────────────────────────────────────
@@ -165,7 +182,10 @@ function renderSongs() {
     }
   } else {
     // DEFAULT FLAT LIST (or Shuffled)
-    displaySongs.forEach((s, idx) => ui.songList.appendChild(buildRow(s, false, idx + 1)));
+    if (state.isLiveShuffle) {
+      displaySongs.sort((a, b) => b.playCount - a.playCount);
+    }
+    displaySongs.forEach((s, idx) => ui.songList.appendChild(buildRow(s, state.isLiveShuffle, idx + 1)));
   }
 
   // Inject "Add Songs" button if search is empty
@@ -316,20 +336,35 @@ function toggleShuffle() {
   ui.shuffleBtn.classList.toggle('active', state.isShuffled);
   
   if (state.isShuffled) {
-    // Turn off cleanup state if it's currently on (Spotify behavior)
-    if (state.isCleanupMode) toggleCleanupMode();
+    if (state.isCleanupMode) toggleCleanupMode(); // Turn off cleanup mode
+    state.isLiveShuffle = true;
+    showToast('🔀 Live Shuffle Active: Randomizing Play Counts...');
     
-    // Fisher-Yates shuffle the master array
+    // Initial shuffle
     for (let i = SONGS.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [SONGS[i], SONGS[j]] = [SONGS[j], SONGS[i]];
     }
-    showToast('🔀 Shuffled playlist');
+
+    if (liveShuffleInterval) clearInterval(liveShuffleInterval);
+    liveShuffleInterval = setInterval(() => {
+      if (state.isLiveShuffle) {
+        // Boost some random songs' play counts significantly to cause re-sorting
+        const randomSongs = [
+          SONGS[Math.floor(Math.random() * SONGS.length)],
+          SONGS[Math.floor(Math.random() * SONGS.length)]
+        ];
+        randomSongs.forEach(rs => rs.playCount += Math.floor(Math.random() * 5) + 1);
+        
+        renderSongs(); 
+      }
+    }, 2000);
+
   } else {
-    // Attempting to "unshuffle" without saving original index is tricky,
-    // so let's just reverse shuffle or re-sort by ID for the prototype
+    state.isLiveShuffle = false;
+    if (liveShuffleInterval) clearInterval(liveShuffleInterval);
     SONGS.sort((a,b) => a.id - b.id);
-    showToast('Unshuffled');
+    showToast('Live Shuffle Disabled');
   }
 
   renderSongs();
