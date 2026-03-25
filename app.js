@@ -154,18 +154,18 @@ function renderSongs() {
     const activeSongs = displaySongs.filter(s => s.playCount >= THRESHOLD).sort((a,b) => b.playCount - a.playCount);
     const inactiveSongs = displaySongs.filter(s => s.playCount < THRESHOLD).sort((a,b) => b.playCount - a.playCount);
     
-    activeSongs.forEach(s => ui.songList.appendChild(buildRow(s, true)));
+    activeSongs.forEach((s, idx) => ui.songList.appendChild(buildRow(s, true, idx + 1)));
     
     if (inactiveSongs.length > 0) {
       const header = document.createElement('h3');
       header.className = 'section-header';
       header.textContent = 'Songs not played in 3 months';
       ui.songList.appendChild(header);
-      inactiveSongs.forEach(s => ui.songList.appendChild(buildRow(s, true)));
+      inactiveSongs.forEach((s, idx) => ui.songList.appendChild(buildRow(s, true, activeSongs.length + idx + 1)));
     }
   } else {
     // DEFAULT FLAT LIST (or Shuffled)
-    displaySongs.forEach(s => ui.songList.appendChild(buildRow(s, false)));
+    displaySongs.forEach((s, idx) => ui.songList.appendChild(buildRow(s, false, idx + 1)));
   }
 
   // Inject "Add Songs" button if search is empty
@@ -205,7 +205,7 @@ function buildAddMoreBtn() {
   return d;
 }
 
-function buildRow(song, isSortedView) {
+function buildRow(song, isSortedView, index) {
   const row = document.createElement('div');
   const isSelected = state.selectedSongs.has(song.id);
   const isPlaying  = state.playingSongId === song.id;
@@ -218,7 +218,7 @@ function buildRow(song, isSortedView) {
   // Render the index number OR a play icon if hovered/playing
   const numColHTML = `
     <div class="row-num-col">
-      <span class="row-num">${isPlaying ? '<svg width="14" height="14" fill="var(--green)" viewBox="0 0 24 24"><path d="M6 3v18l15-9L6 3z"/></svg>' : song.id}</span>
+      <span class="row-num">${isPlaying ? '<svg width="14" height="14" fill="var(--green)" viewBox="0 0 24 24"><path d="M6 3v18l15-9L6 3z"/></svg>' : index}</span>
       <span class="play-icon-hover"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M6 3v18l15-9L6 3z"/></svg></span>
       ${state.isMultiSelect ? `<div class="song-checkbox ${isSelected ? 'checked' : ''}"></div>` : ''}
     </div>
