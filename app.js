@@ -338,9 +338,14 @@ function toggleShuffle() {
   if (state.isShuffled) {
     if (state.isCleanupMode) toggleCleanupMode(); // Turn off cleanup mode
     state.isLiveShuffle = true;
-    showToast('🔀 Live Shuffle Active: Randomizing Play Counts...');
+    showToast('🔀 Live Shuffle: Randomizing Play Counts...');
     
-    // Initial shuffle
+    // Aggressively randomize ALL play counts immediately for instant shuffle
+    SONGS.forEach(s => {
+      s.playCount = Math.floor(Math.random() * 100);
+    });
+    
+    // Initial Fisher-Yates shuffle just in case counts are close
     for (let i = SONGS.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [SONGS[i], SONGS[j]] = [SONGS[j], SONGS[i]];
@@ -349,16 +354,15 @@ function toggleShuffle() {
     if (liveShuffleInterval) clearInterval(liveShuffleInterval);
     liveShuffleInterval = setInterval(() => {
       if (state.isLiveShuffle) {
-        // Boost some random songs' play counts significantly to cause re-sorting
-        const randomSongs = [
-          SONGS[Math.floor(Math.random() * SONGS.length)],
-          SONGS[Math.floor(Math.random() * SONGS.length)]
-        ];
-        randomSongs.forEach(rs => rs.playCount += Math.floor(Math.random() * 5) + 1);
+        // Aggressively boost multiple songs to cause frequent re-ordering
+        for (let k = 0; k < 5; k++) {
+          const rs = SONGS[Math.floor(Math.random() * SONGS.length)];
+          rs.playCount += Math.floor(Math.random() * 20) + 10;
+        }
         
         renderSongs(); 
       }
-    }, 2000);
+    }, 1500); // Slightly faster updates
 
   } else {
     state.isLiveShuffle = false;
